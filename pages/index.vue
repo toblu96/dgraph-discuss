@@ -3,7 +3,10 @@
     <!-- Page nam -->
     <portal to="subheader-page-name">Blog Posts</portal>
     <p v-if="$fetchState.pending">Fetching Posts...</p>
-    <p v-else-if="$fetchState.error">An error occurred :( {{ $fetchState }}</p>
+    <p v-else-if="$fetchState.error">
+      An error occurred :( <br />
+      {{ $fetchState }}
+    </p>
     <div v-else>
       <div class="bg-white shadow overflow-hidden sm:rounded-md">
         <ul class="divide-y divide-gray-200">

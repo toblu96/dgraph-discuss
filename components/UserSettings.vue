@@ -20,7 +20,7 @@
                 class="flex-shrink-0 flex items-center justify-center w-16 bg-yellow-400 text-white text-sm font-medium rounded-l-md"
               >
                 <img
-                  class="bg-contain"
+                  class="w-12 bg-contain"
                   :src="getAvatarUrl(user.avatarImg)"
                   alt="Avatar Image"
                 />
