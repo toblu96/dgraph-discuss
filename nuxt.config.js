@@ -28,7 +28,8 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '~/plugins/vue-portal.js'
+    '~/plugins/vue-portal.js',
+    "~/plugins/vee-validate"
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -54,7 +55,13 @@ export default {
         // change options directly
         options.loose = true
       }
+    },
+    transpile: [
+      "vee-validate/dist/rules"
+    ],
+    extend(config, ctx) {
     }
+
   },
 
   graphql: {

@@ -15,7 +15,8 @@
     "core-js": "^3.9.1",
     "luxon": "^1.26.0",
     "nuxt": "^2.15.3",
-    "portal-vue": "^2.1.7"
+    "portal-vue": "^2.1.7",
+    "vee-validate": "^3.4.5"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^6.0.0",
