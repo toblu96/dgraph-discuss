@@ -18,6 +18,9 @@
         </div>
       </nuxt-link>
     </div>
+    <div class="flex items-center">
+      <UserSelectMenu />
+    </div>
   </div>
 </template>
 
