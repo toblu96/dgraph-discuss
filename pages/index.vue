@@ -1,5 +1,7 @@
 <template>
   <div class="lg:px-8 p-6">
+    <!-- Page nam -->
+    <portal to="subheader-page-name">Blog Posts</portal>
     <p v-if="$fetchState.pending">Fetching Posts...</p>
     <p v-else-if="$fetchState.error">An error occurred :( {{ $fetchState }}</p>
     <div v-else>

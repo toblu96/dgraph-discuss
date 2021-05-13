@@ -1,5 +1,7 @@
 <template>
   <div class="lg:px-12 p-6 space-y-8">
+    <!-- Page nam -->
+    <portal to="subheader-page-name">Blog Post</portal>
     <!-- Breadcrumb -->
     <portal to="subheader-breadcrumb">
       <div class="flex items-center space-x-4">

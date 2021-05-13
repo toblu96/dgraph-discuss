@@ -3,8 +3,8 @@
     <div class="px-12 py-8">
       <div>
         <nav class="sm:hidden" aria-label="Back">
-          <a
-            href="#"
+          <nuxt-link
+            to="/"
             class="flex items-center text-sm font-medium text-gray-400 hover:text-gray-200"
           >
             <!-- Heroicon name: solid/chevron-left -->
@@ -22,7 +22,7 @@
               />
             </svg>
             Back
-          </a>
+          </nuxt-link>
         </nav>
         <nav class="hidden sm:flex" aria-label="Breadcrumb">
           <ol class="flex items-center space-x-4">
@@ -43,9 +43,9 @@
       <div class="mt-2 md:flex md:items-center md:justify-between">
         <div class="flex-1 min-w-0">
           <h2
-            class="text-2xl font-bold leading-7 text-white sm:text-3xl sm:truncate"
+            class="py-1 text-2xl font-bold leading-7 text-white sm:text-3xl sm:truncate"
           >
-            Back End Developer
+            <portal-target name="subheader-page-name"></portal-target>
           </h2>
         </div>
         <div class="mt-4 flex-shrink-0 flex md:mt-0 md:ml-4 space-x-4">
