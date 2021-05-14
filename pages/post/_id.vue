@@ -395,16 +395,21 @@ export default {
       }
       return dateStr;
     },
-    async deletePost(postId) {
+    async deletePost(id) {
       const mutation = gql`
-        mutation deletePost($filter: PostFilter!) {
-          deletePost(filter: $filter) {
+        mutation deletePostWithComments($postId: ID!) {
+          deletePost(filter: { id: [$postId] }) {
+            numUids
+            msg
+          }
+          deleteComment(filter: { not: { has: commentsOn } }) {
+            numUids
             msg
           }
         }
       `;
 
-      const variables = { filter: { id: postId } };
+      const variables = { postId: id };
       const gqlRequest = await this.$graphql.default.request(
         mutation,
         variables
