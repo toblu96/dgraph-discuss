@@ -44,19 +44,12 @@
                         </p>
                       </div>
                     </div>
-                    <!-- Tags -->
+                    <!-- Created at -->
                     <div class="hidden md:flex col-span-2">
                       <div class="flex items-center space-x-2">
-                        <span
-                          class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800"
-                        >
-                          Tag1
-                        </span>
-                        <span
-                          class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800"
-                        >
-                          Some new stuff
-                        </span>
+                        <p class="flex items-center text-sm text-gray-500">
+                          {{ getDateStr(post.datePublished) }}
+                        </p>
                       </div>
                     </div>
                     <!-- Responses -->
@@ -138,6 +131,7 @@
 <script>
 import { gql } from "nuxt-graphql-request";
 import pluralize from "~/utils/pluralize";
+import { DateTime } from "luxon";
 
 export default {
   data() {
@@ -178,6 +172,13 @@ export default {
     pluralize,
     getCount(val) {
       return val?.count;
+    },
+    getDateStr(date) {
+      let dateStr = "at some unknown time";
+      if (date) {
+        dateStr = DateTime.fromISO(date).toRelative() ?? dateStr;
+      }
+      return dateStr;
     },
   },
 };
