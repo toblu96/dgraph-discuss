@@ -1,181 +1,184 @@
 <template>
   <div class="lg:px-12 p-6 space-y-8">
-    <!-- Page nam -->
-    <portal to="subheader-page-name">Blog Post</portal>
-    <!-- Breadcrumb -->
-    <portal to="subheader-breadcrumb">
-      <div class="flex items-center space-x-4">
-        <li>
-          <div class="flex items-center">
-            <!-- Heroicon name: solid/chevron-right -->
-            <svg
-              class="flex-shrink-0 h-5 w-5 text-gray-500"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            <div class="ml-4 text-sm font-medium text-gray-400">
+    <p v-if="$fetchState.pending">Fetching post...</p>
+    <p v-else-if="$fetchState.error">
+      An error occurred :( <br />
+      {{ $fetchState }}
+    </p>
+    <div v-else>
+      <!-- Page nam -->
+      <portal to="subheader-page-name">Blog Post</portal>
+      <!-- Breadcrumb -->
+      <portal to="subheader-breadcrumb">
+        <div class="flex items-center space-x-4">
+          <li>
+            <div class="flex items-center">
+              <!-- Heroicon name: solid/chevron-right -->
+              <svg
+                class="flex-shrink-0 h-5 w-5 text-gray-500"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <div class="ml-4 text-sm font-medium text-gray-400">
+                {{ post.title }}
+              </div>
+            </div>
+          </li>
+        </div>
+      </portal>
+      <!-- Content -->
+      <div>
+        <!-- Title -->
+        <div class="flex justify-between">
+          <div class="space-y-4">
+            <h1 class="text-2xl font-bold text-gray-900">
               {{ post.title }}
+            </h1>
+
+            <div>
+              <div class="flex items-center space-x-2">
+                <div
+                  class="flex-shrink-0 w-2.5 h-2.5 rounded-full bg-pink-600"
+                  aria-hidden="true"
+                ></div>
+                <p class="flex items-center text-sm text-gray-500">
+                  {{ post.category.name }}
+                </p>
+              </div>
             </div>
           </div>
-        </li>
-      </div>
-    </portal>
-    <!-- Content -->
-    <div>
-      <!-- Title -->
-      <div class="flex justify-between">
-        <div class="space-y-4">
-          <h1 class="text-2xl font-bold text-gray-900">
-            {{ post.title }}
-          </h1>
-
           <div>
-            <div class="flex items-center space-x-2">
-              <div
-                class="flex-shrink-0 w-2.5 h-2.5 rounded-full bg-pink-600"
-                aria-hidden="true"
-              ></div>
-              <p class="flex items-center text-sm text-gray-500">
-                {{ post.category.name }}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div>
-          <button
-            type="button"
-            @click="deletePost(post.id)"
-            class="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-          >
-            <!-- Heroicon name: outline/trash -->
-            <svg
-              class="h-5 w-5"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              aria-hidden="true"
+            <button
+              type="button"
+              @click="deletePost(post.id)"
+              class="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-              ></path>
-            </svg>
-          </button>
-        </div>
-      </div>
-      <!-- Author -->
-      <div class="mt-8">
-        <div class="min-w-0 flex-1 flex items-center space-x-4">
-          <div class="flex-shrink-0">
-            <img
-              class="h-12 w-12 rounded-full"
-              :src="getAvatarUrl(post.author.avatarImg)"
-            />
+              <!-- Heroicon name: outline/trash -->
+              <svg
+                class="h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                ></path>
+              </svg>
+            </button>
           </div>
-          <div class="min-w-0 flex-1">
-            <!-- Post avatar and title -->
-            <div class="space-y-1">
-              <p class="text-sm font-medium text-pink-600 truncate">
-                {{ post.author.username }}
-              </p>
-              <p class="flex items-center text-sm text-gray-500">
-                {{ getDateStr(post.datePublished) }}
-              </p>
+        </div>
+        <!-- Author -->
+        <div class="mt-8">
+          <div class="min-w-0 flex-1 flex items-center space-x-4">
+            <div class="flex-shrink-0">
+              <img
+                class="h-12 w-12 rounded-full"
+                :src="getAvatarUrl(post.author.avatarImg)"
+              />
+            </div>
+            <div class="min-w-0 flex-1">
+              <!-- Post avatar and title -->
+              <div class="space-y-1">
+                <p class="text-sm font-medium text-pink-600 truncate">
+                  {{ post.author.username }}
+                </p>
+                <p class="flex items-center text-sm text-gray-500">
+                  {{ getDateStr(post.datePublished) }}
+                </p>
+              </div>
             </div>
           </div>
         </div>
+        <!-- Post text -->
+        <div class="mt-4 mb-8">
+          <p>
+            {{ post.text }}
+          </p>
+        </div>
       </div>
-      <!-- Post text -->
-      <div class="mt-4">
-        <p>
-          {{ post.text }}
-        </p>
-      </div>
-    </div>
-    <!-- Activity -->
-    <div class="bg-white p-4 rounded-md">
-      <div class="flow-root">
-        <ul class="-mb-8">
-          <li>
-            <div class="relative pb-8">
-              <span
-                class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
-                aria-hidden="true"
-              ></span>
-              <div class="relative flex items-start space-x-3">
-                <div class="relative">
-                  <img
-                    class="h-10 w-10 rounded-full bg-gray-400 flex items-center justify-center ring-8 ring-white"
-                    src="https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
-                    alt=""
-                  />
-
-                  <span
-                    class="absolute -bottom-0.5 -right-1 bg-white rounded-tl px-0.5 py-px"
-                  >
-                    <!-- Heroicon name: solid/chat-alt -->
-                    <svg
-                      class="h-5 w-5 text-gray-400"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </span>
-                </div>
-                <div class="min-w-0 flex-1">
+      <!-- Activity -->
+      <div class="bg-white p-4 rounded-md">
+        <div class="flow-root">
+          <ul class="-mb-4">
+            <!-- Post created -->
+            <li>
+              <div class="relative pb-8">
+                <span
+                  class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
+                  aria-hidden="true"
+                ></span>
+                <div class="relative flex items-start space-x-3">
                   <div>
-                    <div class="text-sm">
-                      <a href="#" class="font-medium text-gray-900"
-                        >Eduardo Benz</a
+                    <div class="relative px-1">
+                      <div
+                        class="h-8 w-8 bg-gray-100 rounded-full ring-8 ring-white flex items-center justify-center"
                       >
+                        <!-- Heroicon name: solid/sparkles -->
+                        <svg
+                          class="h-5 w-5 text-gray-500"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z"
+                            clip-rule="evenodd"
+                          ></path>
+                        </svg>
+                      </div>
                     </div>
-                    <p class="mt-0.5 text-sm text-gray-500">Commented 6d ago</p>
                   </div>
-                  <div class="mt-2 text-sm text-gray-700">
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Tincidunt nunc ipsum tempor purus vitae id. Morbi in
-                      vestibulum nec varius. Et diam cursus quis sed purus nam.
-                    </p>
+                  <div class="min-w-0 flex-1 py-1.5">
+                    <div class="text-sm text-gray-500">
+                      <a href="#" class="font-medium text-gray-900">{{
+                        post.author.displayName || "Darth Vader"
+                      }}</a>
+                      created this post
+                      <span class="whitespace-nowrap">{{
+                        getDateStr(post.datePublished)
+                      }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </li>
+            </li>
 
-          <li>
-            <div class="relative pb-8">
-              <span
-                class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
-                aria-hidden="true"
-              ></span>
-              <div class="relative flex items-start space-x-3">
-                <div>
-                  <div class="relative px-1">
-                    <div
-                      class="h-8 w-8 bg-gray-100 rounded-full ring-8 ring-white flex items-center justify-center"
+            <!-- Iterating Comments -->
+            <li v-for="comment in post.comments" :key="comment.id">
+              <div class="relative pb-8">
+                <span
+                  class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
+                  aria-hidden="true"
+                ></span>
+                <div class="relative flex items-start space-x-3">
+                  <div class="relative">
+                    <img
+                      class="h-10 w-10 rounded-full bg-white flex items-center justify-center ring-8 ring-white"
+                      :src="getAvatarUrl(comment.author.avatarImg)"
+                      alt=""
+                    />
+
+                    <span
+                      class="absolute -bottom-0.5 -right-1 bg-white rounded-tl px-0.5 py-px"
                     >
-                      <!-- Heroicon name: solid/user-circle -->
+                      <!-- Heroicon name: solid/chat-alt -->
                       <svg
-                        class="h-5 w-5 text-gray-500"
+                        class="h-5 w-5 text-gray-400"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
@@ -183,44 +186,49 @@
                       >
                         <path
                           fill-rule="evenodd"
-                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                          d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
                           clip-rule="evenodd"
                         />
                       </svg>
+                    </span>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div>
+                      <div class="text-sm">
+                        <a href="#" class="font-medium text-gray-900">{{
+                          comment.author.displayName
+                        }}</a>
+                      </div>
+                      <p class="mt-0.5 text-sm text-gray-500">
+                        Commented {{ getDateStr(comment.datePublished) }}
+                      </p>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-700">
+                      <p>
+                        {{ comment.text }}
+                      </p>
                     </div>
                   </div>
                 </div>
-                <div class="min-w-0 flex-1 py-1.5">
-                  <div class="text-sm text-gray-500">
-                    <a href="#" class="font-medium text-gray-900"
-                      >Hilary Mahy</a
-                    >
-                    assigned
-                    <a href="#" class="font-medium text-gray-900"
-                      >Kristin Watson</a
-                    >
-                    <span class="whitespace-nowrap">2d ago</span>
-                  </div>
-                </div>
               </div>
-            </div>
-          </li>
+            </li>
+            <!-- Write your own comment -->
+            <li class="-mx-4">
+              <div class="relative bg-gray-200 p-4 rounded-md">
+                <div class="relative flex items-start space-x-3">
+                  <div class="relative">
+                    <img
+                      class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center ring-8 ring-gray-200"
+                      :src="getAvatarUrl($store.state.auth.user.avatarImg)"
+                      alt="Avatar Image"
+                    />
 
-          <li>
-            <div class="relative pb-8">
-              <span
-                class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
-                aria-hidden="true"
-              ></span>
-              <div class="relative flex items-start space-x-3">
-                <div>
-                  <div class="relative px-1">
-                    <div
-                      class="h-8 w-8 bg-gray-100 rounded-full ring-8 ring-white flex items-center justify-center"
+                    <span
+                      class="absolute -bottom-0.5 -right-1 bg-gray-200 rounded-tl px-0.5 py-px"
                     >
-                      <!-- Heroicon name: solid/tag -->
+                      <!-- Heroicon name: solid/chat-alt -->
                       <svg
-                        class="h-5 w-5 text-gray-500"
+                        class="h-5 w-5 text-gray-600"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
@@ -228,114 +236,97 @@
                       >
                         <path
                           fill-rule="evenodd"
-                          d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z"
+                          d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
                           clip-rule="evenodd"
                         />
                       </svg>
+                    </span>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div>
+                      <div class="text-sm">
+                        <a href="#" class="font-medium text-gray-900">{{
+                          $store.state.auth.user.displayName || "Darth Vader"
+                        }}</a>
+                      </div>
+                      <p class="mt-0.5 text-sm text-gray-500">
+                        Not Published yet
+                      </p>
+                    </div>
+                    <div class="mt-4 text-sm text-gray-700">
+                      <ValidationObserver
+                        ref="observer"
+                        v-slot="{ handleSubmit }"
+                      >
+                        <form @submit.prevent="handleSubmit(createComment)">
+                          <ValidationProvider
+                            class="sm:col-span-6"
+                            name="text"
+                            rules="required"
+                            v-slot="{ errors }"
+                          >
+                            <div class="mt-1 relative">
+                              <textarea
+                                id="comment_message"
+                                name="comment_message"
+                                rows="5"
+                                v-model="commentText"
+                                placeholder="Write a comment"
+                                :class="
+                                  errors[0]
+                                    ? 'border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500'
+                                    : 'border-gray-300 focus:ring-pink-500 focus:border-pink-500'
+                                "
+                                class="block w-full pr-10 focus:outline-none sm:text-sm rounded-md"
+                              ></textarea>
+                              <div
+                                v-show="errors[0]"
+                                class="absolute inset-y-3 right-0 pr-3 flex items-start pointer-events-none"
+                              >
+                                <!-- Heroicon name: solid/exclamation-circle -->
+                                <svg
+                                  class="h-5 w-5 text-red-500"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                  aria-hidden="true"
+                                >
+                                  <path
+                                    fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                    clip-rule="evenodd"
+                                  />
+                                </svg>
+                              </div>
+                            </div>
+
+                            <p
+                              v-show="errors[0]"
+                              class="mt-2 text-sm text-red-600"
+                              id="comment-error"
+                            >
+                              {{ errors[0] }}
+                            </p>
+                          </ValidationProvider>
+                          <div class="pt-3">
+                            <div class="flex justify-end">
+                              <button
+                                type="submit"
+                                class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+                              >
+                                Comment
+                              </button>
+                            </div>
+                          </div>
+                        </form>
+                      </ValidationObserver>
                     </div>
                   </div>
                 </div>
-                <div class="min-w-0 flex-1 py-0">
-                  <div class="text-sm leading-8 text-gray-500">
-                    <span class="mr-0.5">
-                      <a href="#" class="font-medium text-gray-900"
-                        >Hilary Mahy</a
-                      >
-                      added tags
-                    </span>
-                    <span class="mr-0.5">
-                      <a
-                        href="#"
-                        class="relative inline-flex items-center rounded-full border border-gray-300 px-3 py-0.5 text-sm"
-                      >
-                        <span
-                          class="absolute flex-shrink-0 flex items-center justify-center"
-                        >
-                          <span
-                            class="h-1.5 w-1.5 rounded-full bg-rose-500"
-                            aria-hidden="true"
-                          ></span>
-                        </span>
-                        <span class="ml-3.5 font-medium text-gray-900"
-                          >Bug</span
-                        >
-                      </a>
-                      <a
-                        href="#"
-                        class="relative inline-flex items-center rounded-full border border-gray-300 px-3 py-0.5 text-sm"
-                      >
-                        <span
-                          class="absolute flex-shrink-0 flex items-center justify-center"
-                        >
-                          <span
-                            class="h-1.5 w-1.5 rounded-full bg-pink-500"
-                            aria-hidden="true"
-                          ></span>
-                        </span>
-                        <span class="ml-3.5 font-medium text-gray-900"
-                          >Accessibility</span
-                        >
-                      </a>
-                    </span>
-                    <span class="whitespace-nowrap">6h ago</span>
-                  </div>
-                </div>
               </div>
-            </div>
-          </li>
-
-          <li>
-            <div class="relative pb-8">
-              <div class="relative flex items-start space-x-3">
-                <div class="relative">
-                  <img
-                    class="h-10 w-10 rounded-full bg-gray-400 flex items-center justify-center ring-8 ring-white"
-                    src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
-                    alt=""
-                  />
-
-                  <span
-                    class="absolute -bottom-0.5 -right-1 bg-white rounded-tl px-0.5 py-px"
-                  >
-                    <!-- Heroicon name: solid/chat-alt -->
-                    <svg
-                      class="h-5 w-5 text-gray-400"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </span>
-                </div>
-                <div class="min-w-0 flex-1">
-                  <div>
-                    <div class="text-sm">
-                      <a href="#" class="font-medium text-gray-900"
-                        >Jason Meyers</a
-                      >
-                    </div>
-                    <p class="mt-0.5 text-sm text-gray-500">Commented 2h ago</p>
-                  </div>
-                  <div class="mt-2 text-sm text-gray-700">
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Tincidunt nunc ipsum tempor purus vitae id. Morbi in
-                      vestibulum nec varius. Et diam cursus quis sed purus nam.
-                      Scelerisque amet elit non sit ut tincidunt condimentum.
-                      Nisl ultrices eu venenatis diam.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </li>
-        </ul>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -344,10 +335,21 @@
 <script>
 import { gql } from "nuxt-graphql-request";
 import { DateTime } from "luxon";
+import { ValidationProvider, ValidationObserver } from "vee-validate";
 
 export default {
-  async asyncData({ $graphql, params }) {
-    const postId = params.id;
+  components: {
+    ValidationProvider,
+    ValidationObserver,
+  },
+  data() {
+    return {
+      post: {},
+      commentText: "",
+    };
+  },
+  async fetch() {
+    const postId = this.$route.params.id;
 
     const query = gql`
       query getPost($id: ID!) {
@@ -368,17 +370,7 @@ export default {
           comments {
             id
             text
-            commentsOn {
-              comments {
-                id
-                text
-                author {
-                  username
-                  displayName
-                  avatarImg
-                }
-              }
-            }
+            datePublished
             author {
               username
               displayName
@@ -390,9 +382,8 @@ export default {
     `;
     const variables = { id: postId };
 
-    const gqlRequest = await $graphql.default.request(query, variables);
-    const post = gqlRequest.getPost;
-    return { post };
+    const gqlRequest = await this.$graphql.default.request(query, variables);
+    this.post = gqlRequest.getPost;
   },
   methods: {
     getAvatarUrl: (img) =>
@@ -423,6 +414,51 @@ export default {
         this.$router.push("/");
       }
       console.log(gqlRequest);
+    },
+    async createComment() {
+      if (!this.commentText) return;
+
+      // add Comment
+      const mutation = gql`
+        mutation addComment(
+          $text: String!
+          $commentsOnId: ID!
+          $username: String!
+          $datePublished: DateTime!
+        ) {
+          addComment(
+            input: {
+              text: $text
+              author: { username: $username }
+              commentsOn: { id: $commentsOnId }
+              datePublished: $datePublished
+            }
+          ) {
+            comment {
+              text
+              datePublished
+            }
+          }
+        }
+      `;
+
+      const variables = {
+        text: this.commentText,
+        commentsOnId: this.post.id,
+        username: this.$store.state.auth.user.username,
+        datePublished: DateTime.now(),
+      };
+      const gqlRequest = await this.$graphql.default.request(
+        mutation,
+        variables
+      );
+
+      if (gqlRequest.addComment?.comment?.length > 0) {
+        this.$fetch();
+      }
+
+      this.commentText = "";
+      this.$refs.observer.reset();
     },
   },
 };
