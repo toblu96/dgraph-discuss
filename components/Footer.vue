@@ -3,7 +3,11 @@
   <footer>
     <div class="mx-auto md:flex md:items-center md:justify-between lg:px-8">
       <div class="flex justify-center space-x-6 md:order-2">
-        <a href="#" class="text-gray-400 hover:text-gray-500">
+        <a
+          href="https://github.com/toblu96/dgraph-discuss"
+          target="_blank"
+          class="text-gray-400 hover:text-gray-500"
+        >
           <span class="sr-only">GitHub</span>
           <svg
             class="h-6 w-6"
