@@ -158,24 +158,6 @@
                   </div>
                 </div>
 
-                <div class="sm:col-span-6">
-                  <label
-                    for="tags"
-                    class="block text-sm font-medium text-gray-700"
-                  >
-                    Tags (optional)
-                  </label>
-                  <div class="mt-1">
-                    <input
-                      type="text"
-                      name="tags"
-                      id="tags"
-                      autocomplete="tags"
-                      class="shadow-sm focus:ring-pink-500 focus:border-pink-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-                </div>
-
                 <ValidationProvider
                   class="sm:col-span-6"
                   name="text"
@@ -270,7 +252,6 @@ export default {
       title: "",
       category: null,
       allCategories: {},
-      tags: "",
       text: "",
     };
   },
