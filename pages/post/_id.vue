@@ -93,7 +93,7 @@
               <!-- Post avatar and title -->
               <div class="space-y-1">
                 <p class="text-sm font-medium text-pink-600 truncate">
-                  {{ post.author.username }}
+                  {{ post.author.displayName || "Darth Vader" }}
                 </p>
                 <p class="flex items-center text-sm text-gray-500">
                   {{ getDateStr(post.datePublished) }}

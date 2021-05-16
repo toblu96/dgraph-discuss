@@ -32,10 +32,11 @@
                   <a
                     href="#"
                     class="text-gray-900 font-medium truncate hover:text-gray-600"
-                    >{{ user.username || "#noname" }}</a
                   >
-                  <p class="text-gray-500 truncate">
                     {{ user.displayName || "Darth Vader" }}
+                  </a>
+                  <p class="text-gray-500 truncate">
+                    {{ user.username || "#noname" }}
                   </p>
                 </div>
                 <div class="flex-shrink-0 pr-2">
@@ -110,7 +111,7 @@
             >
               <div class="ml-4 mt-4">
                 <h3 class="text-lg leading-6 font-medium text-gray-900">
-                  Edit {{ editedUser.username }}
+                  Edit {{ editedUser.displayName || "Darth Vader" }}
                 </h3>
                 <p class="mt-1 text-sm text-gray-500">
                   Lorem ipsum dolor sit amet consectetur adipisicing elit quam
@@ -152,7 +153,7 @@
                     for="edit_user_displayname"
                     class="block text-sm font-medium text-gray-700"
                   >
-                    Display Name
+                    Full Name
                   </label>
                   <div class="mt-1">
                     <input

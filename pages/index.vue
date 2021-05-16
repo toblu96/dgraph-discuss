@@ -29,7 +29,7 @@
                         {{ post.title }}
                       </p>
                       <p class="mt-2 flex items-center text-sm text-gray-500">
-                        {{ post.author.username }}
+                        {{ post.author.displayName || "Darth Vader" }}
                       </p>
                     </div>
                     <!-- Category -->
