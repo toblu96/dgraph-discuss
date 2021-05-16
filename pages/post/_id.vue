@@ -57,6 +57,7 @@
           </div>
           <div class="space-x-1">
             <button
+              v-show="post.author.username === $store.state.auth.user.username"
               type="button"
               @click="deletePost(post.id)"
               class="inline-flex items-center p-2 border border-gray-200 rounded-full shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
