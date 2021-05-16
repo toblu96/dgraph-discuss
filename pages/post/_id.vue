@@ -55,11 +55,11 @@
               </div>
             </div>
           </div>
-          <div>
+          <div class="space-x-1">
             <button
               type="button"
               @click="deletePost(post.id)"
-              class="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+              class="inline-flex items-center p-2 border border-gray-200 rounded-full shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
             >
               <!-- Heroicon name: outline/trash -->
               <svg
@@ -75,6 +75,36 @@
                   stroke-linejoin="round"
                   stroke-width="2"
                   d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                ></path>
+              </svg>
+            </button>
+            <button
+              type="button"
+              @click="toggleLike()"
+              :class="
+                userHasLikedPost(
+                  $store.state.auth.user.username,
+                  this.post.likes
+                )
+                  ? 'border-transparent text-white bg-pink-600 hover:bg-pink-700 '
+                  : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50 '
+              "
+              class="inline-flex items-center p-2 border rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+            >
+              <!-- Heroicon name: outline/heart -->
+              <svg
+                class="h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                 ></path>
               </svg>
             </button>
@@ -377,6 +407,9 @@ export default {
               avatarImg
             }
           }
+          likes {
+            username
+          }
         }
       }
     `;
@@ -386,6 +419,11 @@ export default {
     this.post = gqlRequest.getPost;
   },
   methods: {
+    userHasLikedPost(username, likes) {
+      return likes.findIndex((element) => element.username === username) == -1
+        ? false
+        : true;
+    },
     getAvatarUrl: (img) =>
       img ?? "/images/" + Math.floor(Math.random() * (9 - 1) + 1) + ".svg",
     getDateStr(date) {
@@ -419,6 +457,53 @@ export default {
         this.$router.push("/");
       }
       console.log(gqlRequest);
+    },
+    async toggleLike() {
+      // detect if like is set or deleted
+      let mutationType = "set";
+      if (
+        this.userHasLikedPost(
+          this.$store.state.auth.user.username,
+          this.post.likes
+        )
+      ) {
+        mutationType = "remove";
+      }
+
+      const mutation = gql`
+        mutation updatePost($username: String!, $postId: ID!) {
+          updatePost(
+            input: 
+              {filter: {id: [$postId]},
+              ${mutationType}: { likes: { username: $username } }
+            }
+          ) {
+            post {
+              title
+              id
+              text
+              datePublished
+            }
+          }
+        }
+      `;
+
+      const variables = {
+        username: this.$store.state.auth.user.username,
+        postId: this.post.id,
+      };
+
+      let gqlRequest = "";
+      try {
+        gqlRequest = await this.$graphql.default.request(mutation, variables);
+      } catch (error) {
+        console.log(error);
+        // this.errors = error.response?.errors;
+      }
+
+      if (gqlRequest.updatePost?.post[0]) {
+        this.$fetch();
+      }
     },
     async createComment() {
       if (!this.commentText) return;
