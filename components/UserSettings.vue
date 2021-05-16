@@ -20,7 +20,7 @@
                 class="flex-shrink-0 flex items-center justify-center w-16 bg-yellow-400 text-white text-sm font-medium rounded-l-md"
               >
                 <img
-                  class="w-12 bg-contain"
+                  class="w-12 bg-contain rounded-full"
                   :src="getAvatarUrl(user.avatarImg)"
                   alt="Avatar Image"
                 />
@@ -62,6 +62,40 @@
                     </svg>
                   </button>
                 </div>
+              </div>
+            </li>
+            <!-- Add new user -->
+            <li class="col-span-1 flex">
+              <div
+                class="flex justify-between items-center shadow-sm rounded-md"
+              >
+                <nuxt-link
+                  to="/user/new"
+                  class="group px-4 py-3 h-full bg-white border border-gray-200 rounded-md flex items-center focus:outline-none focus:ring-2 focus:ring-pink-500"
+                >
+                  <span
+                    class="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400"
+                  >
+                    <svg
+                      class="h-5 w-5"
+                      x-description="Heroicon name: solid/plus"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                  </span>
+                  <span
+                    class="ml-4 text-sm font-medium text-pink-600 group-hover:text-pink-500"
+                    >Add User</span
+                  >
+                </nuxt-link>
               </div>
             </li>
           </ul>
@@ -151,7 +185,48 @@
                 </div>
               </div>
             </div>
+
+            <!-- Error panel -->
+            <div v-if="errors[0]" class="rounded-md bg-red-50 p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <!-- Heroicon name: solid/x-circle -->
+                  <svg
+                    class="h-5 w-5 text-red-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-red-800">
+                    There were {{ errors.length }} errors with your submission
+                  </h3>
+                  <div class="mt-2 text-sm text-red-700">
+                    <ul class="list-disc pl-5 space-y-1">
+                      <li v-for="(error, idx) in errors" :key="idx">
+                        {{ error.message }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="flex justify-end pt-5">
+              <button
+                @click="deleteUser(editedUser.username)"
+                class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+              >
+                Delete User
+              </button>
               <button
                 @click="saveUser()"
                 class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
@@ -172,6 +247,7 @@ import { gql } from "nuxt-graphql-request";
 export default {
   data() {
     return {
+      errors: [],
       users: [],
       showUserEdit: false,
       editedUser: {
@@ -237,10 +313,45 @@ export default {
         variables
       );
 
-      console.log(gqlRequest);
-      this.$fetch();
-      this.editedUser = {};
-      this.showUserEdit = false;
+      if (gqlRequest.updateUser?.user[0]) {
+        this.$fetch();
+        this.editedUser = {};
+        this.showUserEdit = false;
+      }
+    },
+    async deleteUser(userId) {
+      // Check if data is valid
+      if (!userId) {
+        console.log("Can't delete user without a valid user id (username)");
+        return;
+      }
+
+      const mutation = gql`
+        mutation deleteUser($username: String!) {
+          deleteUser(filter: { username: { eq: $username } }) {
+            msg
+            numUids
+          }
+        }
+      `;
+
+      const variables = {
+        username: userId,
+      };
+
+      let gqlRequest = "";
+      try {
+        gqlRequest = await this.$graphql.default.request(mutation, variables);
+      } catch (error) {
+        console.log(error);
+        this.errors = error.response?.errors;
+      }
+
+      if (gqlRequest.deleteUser.msg === "Deleted") {
+        this.$fetch();
+        this.editedUser = {};
+        this.showUserEdit = false;
+      }
     },
   },
 };
