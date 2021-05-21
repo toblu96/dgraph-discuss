@@ -367,6 +367,7 @@
 import { gql } from "nuxt-graphql-request";
 import { DateTime } from "luxon";
 import { ValidationProvider, ValidationObserver } from "vee-validate";
+import getAvatarUrl from "~/utils/user";
 
 export default {
   components: {
@@ -425,8 +426,7 @@ export default {
         ? false
         : true;
     },
-    getAvatarUrl: (img) =>
-      img ?? "/images/" + Math.floor(Math.random() * (9 - 1) + 1) + ".svg",
+    getAvatarUrl,
     getDateStr(date) {
       let dateStr = "at some unknown time";
       if (date) {

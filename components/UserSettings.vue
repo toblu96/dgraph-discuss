@@ -244,6 +244,7 @@
 
 <script>
 import { gql } from "nuxt-graphql-request";
+import getAvatarUrl from "~/utils/user";
 
 export default {
   data() {
@@ -273,8 +274,7 @@ export default {
     this.users = gqlRequest.queryUser;
   },
   methods: {
-    getAvatarUrl: (img) =>
-      img ?? "/images/" + Math.floor(Math.random() * (9 - 1) + 1) + ".svg",
+    getAvatarUrl,
     editUser(user) {
       this.showUserEdit = true;
       this.editedUser.username = user.username;

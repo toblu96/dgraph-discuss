@@ -172,6 +172,7 @@
 <script>
 import { gql } from "nuxt-graphql-request";
 import pluralize from "~/utils/pluralize";
+import getAvatarUrl from "~/utils/user";
 import { DateTime } from "luxon";
 
 export default {
@@ -210,9 +211,7 @@ export default {
     this.posts = gqlRequest.queryPost;
   },
   methods: {
-    getAvatarUrl: (img) =>
-      img ?? "/images/" + Math.floor(Math.random() * (9 - 1) + 1) + ".svg",
-
+    getAvatarUrl,
     pluralize,
     getCount(val) {
       return val?.count;

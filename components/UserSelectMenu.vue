@@ -146,6 +146,7 @@
 <script>
 import ClickAway from "~/directives/click-away";
 import { gql } from "nuxt-graphql-request";
+import getAvatarUrl from "~/utils/user";
 
 export default {
   directives: {
@@ -181,8 +182,7 @@ export default {
       this.$store.commit("auth/user", user);
       this.close();
     },
-    getAvatarUrl: (img) =>
-      img ?? "/images/" + Math.floor(Math.random() * (9 - 1) + 1) + ".svg",
+    getAvatarUrl,
   },
 };
 </script>
