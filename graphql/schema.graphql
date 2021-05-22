@@ -1,0 +1,678 @@
+#######################
+# Input Schema
+#######################
+
+type User {
+	username: String! @id
+	displayName: String
+	avatarImg: String
+	posts(filter: PostFilter, order: PostOrder, first: Int, offset: Int): [Post!] @hasInverse(field: author)
+	comments(filter: CommentFilter, order: CommentOrder, first: Int, offset: Int): [Comment!] @hasInverse(field: author)
+	likesOn(filter: PostFilter, order: PostOrder, first: Int, offset: Int): [Post!] @hasInverse(field: likes)
+	postsAggregate(filter: PostFilter): PostAggregateResult
+	commentsAggregate(filter: CommentFilter): CommentAggregateResult
+	likesOnAggregate(filter: PostFilter): PostAggregateResult
+}
+
+type Post {
+	id: ID!
+	title: String! @search(by: [term])
+	text: String! @search(by: [fulltext])
+	datePublished: DateTime
+	author(filter: UserFilter): User! @hasInverse(field: posts)
+	category(filter: CategoryFilter): Category! @hasInverse(field: posts)
+	comments(filter: CommentFilter, order: CommentOrder, first: Int, offset: Int): [Comment!] @hasInverse(field: commentsOn)
+	likes(filter: UserFilter, order: UserOrder, first: Int, offset: Int): [User!] @hasInverse(field: likesOn)
+	commentsAggregate(filter: CommentFilter): CommentAggregateResult
+	likesAggregate(filter: UserFilter): UserAggregateResult
+}
+
+type Comment {
+	id: ID!
+	text: String!
+	commentsOn(filter: PostFilter): Post! @hasInverse(field: comments)
+	author(filter: UserFilter): User! @hasInverse(field: comments)
+	datePublished: DateTime
+}
+
+type Category {
+	id: ID!
+	name: String! @search(by: [term])
+	posts(filter: PostFilter, order: PostOrder, first: Int, offset: Int): [Post!] @hasInverse(field: category)
+	postsAggregate(filter: PostFilter): PostAggregateResult
+}
+
+#######################
+# Extended Definitions
+#######################
+
+"""
+The Int64 scalar type represents a signed 64‐bit numeric non‐fractional value.
+Int64 can represent values in range [-(2^63),(2^63 - 1)].
+"""
+scalar Int64
+
+"""
+The DateTime scalar type represents date and time as a string in RFC3339 format.
+For example: "1985-04-12T23:20:50.52Z" represents 20 minutes and 50.52 seconds after the 23rd hour of April 12th, 1985 in UTC.
+"""
+scalar DateTime
+
+input IntRange{
+	min: Int!
+	max: Int!
+}
+
+input FloatRange{
+	min: Float!
+	max: Float!
+}
+
+input Int64Range{
+	min: Int64!
+	max: Int64!
+}
+
+input DateTimeRange{
+	min: DateTime!
+	max: DateTime!
+}
+
+input StringRange{
+	min: String!
+	max: String!
+}
+
+enum DgraphIndex {
+	int
+	int64
+	float
+	bool
+	hash
+	exact
+	term
+	fulltext
+	trigram
+	regexp
+	year
+	month
+	day
+	hour
+	geo
+}
+
+input AuthRule {
+	and: [AuthRule]
+	or: [AuthRule]
+	not: AuthRule
+	rule: String
+}
+
+enum HTTPMethod {
+	GET
+	POST
+	PUT
+	PATCH
+	DELETE
+}
+
+enum Mode {
+	BATCH
+	SINGLE
+}
+
+input CustomHTTP {
+	url: String!
+	method: HTTPMethod!
+	body: String
+	graphql: String
+	mode: Mode
+	forwardHeaders: [String!]
+	secretHeaders: [String!]
+	introspectionHeaders: [String!]
+	skipIntrospection: Boolean
+}
+
+type Point {
+	longitude: Float!
+	latitude: Float!
+}
+
+input PointRef {
+	longitude: Float!
+	latitude: Float!
+}
+
+input NearFilter {
+	distance: Float!
+	coordinate: PointRef!
+}
+
+input PointGeoFilter {
+	near: NearFilter
+	within: WithinFilter
+}
+
+type PointList {
+	points: [Point!]!
+}
+
+input PointListRef {
+	points: [PointRef!]!
+}
+
+type Polygon {
+	coordinates: [PointList!]!
+}
+
+input PolygonRef {
+	coordinates: [PointListRef!]!
+}
+
+type MultiPolygon {
+	polygons: [Polygon!]!
+}
+
+input MultiPolygonRef {
+	polygons: [PolygonRef!]!
+}
+
+input WithinFilter {
+	polygon: PolygonRef!
+}
+
+input ContainsFilter {
+	point: PointRef
+	polygon: PolygonRef
+}
+
+input IntersectsFilter {
+	polygon: PolygonRef
+	multiPolygon: MultiPolygonRef
+}
+
+input PolygonGeoFilter {
+	near: NearFilter
+	within: WithinFilter
+	contains: ContainsFilter
+	intersects: IntersectsFilter
+}
+
+input GenerateQueryParams {
+	get: Boolean
+	query: Boolean
+	password: Boolean
+	aggregate: Boolean
+}
+
+input GenerateMutationParams {
+	add: Boolean
+	update: Boolean
+	delete: Boolean
+}
+
+directive @hasInverse(field: String!) on FIELD_DEFINITION
+directive @search(by: [DgraphIndex!]) on FIELD_DEFINITION
+directive @dgraph(type: String, pred: String) on OBJECT | INTERFACE | FIELD_DEFINITION
+directive @id on FIELD_DEFINITION
+directive @withSubscription on OBJECT | INTERFACE
+directive @secret(field: String!, pred: String) on OBJECT | INTERFACE
+directive @auth(
+	password: AuthRule
+	query: AuthRule,
+	add: AuthRule,
+	update: AuthRule,
+	delete: AuthRule) on OBJECT | INTERFACE
+directive @custom(http: CustomHTTP, dql: String) on FIELD_DEFINITION
+directive @remote on OBJECT | INTERFACE | UNION | INPUT_OBJECT | ENUM
+directive @cascade(fields: [String]) on FIELD
+directive @lambda on FIELD_DEFINITION
+directive @cacheControl(maxAge: Int!) on QUERY
+directive @generate(
+	query: GenerateQueryParams,
+	mutation: GenerateMutationParams,
+	subscription: Boolean) on OBJECT | INTERFACE
+
+input IntFilter {
+	eq: Int
+	le: Int
+	lt: Int
+	ge: Int
+	gt: Int
+	between: IntRange
+}
+
+input Int64Filter {
+	eq: Int64
+	le: Int64
+	lt: Int64
+	ge: Int64
+	gt: Int64
+	between: Int64Range
+}
+
+input FloatFilter {
+	eq: Float
+	le: Float
+	lt: Float
+	ge: Float
+	gt: Float
+	between: FloatRange
+}
+
+input DateTimeFilter {
+	eq: DateTime
+	le: DateTime
+	lt: DateTime
+	ge: DateTime
+	gt: DateTime
+	between: DateTimeRange
+}
+
+input StringTermFilter {
+	allofterms: String
+	anyofterms: String
+}
+
+input StringRegExpFilter {
+	regexp: String
+}
+
+input StringFullTextFilter {
+	alloftext: String
+	anyoftext: String
+}
+
+input StringExactFilter {
+	eq: String
+	in: [String]
+	le: String
+	lt: String
+	ge: String
+	gt: String
+	between: StringRange
+}
+
+input StringHashFilter {
+	eq: String
+	in: [String]
+}
+
+#######################
+# Generated Types
+#######################
+
+type AddCategoryPayload {
+	category(filter: CategoryFilter, order: CategoryOrder, first: Int, offset: Int): [Category]
+	numUids: Int
+}
+
+type AddCommentPayload {
+	comment(filter: CommentFilter, order: CommentOrder, first: Int, offset: Int): [Comment]
+	numUids: Int
+}
+
+type AddPostPayload {
+	post(filter: PostFilter, order: PostOrder, first: Int, offset: Int): [Post]
+	numUids: Int
+}
+
+type AddUserPayload {
+	user(filter: UserFilter, order: UserOrder, first: Int, offset: Int): [User]
+	numUids: Int
+}
+
+type CategoryAggregateResult {
+	count: Int
+	nameMin: String
+	nameMax: String
+}
+
+type CommentAggregateResult {
+	count: Int
+	textMin: String
+	textMax: String
+	datePublishedMin: DateTime
+	datePublishedMax: DateTime
+}
+
+type DeleteCategoryPayload {
+	category(filter: CategoryFilter, order: CategoryOrder, first: Int, offset: Int): [Category]
+	msg: String
+	numUids: Int
+}
+
+type DeleteCommentPayload {
+	comment(filter: CommentFilter, order: CommentOrder, first: Int, offset: Int): [Comment]
+	msg: String
+	numUids: Int
+}
+
+type DeletePostPayload {
+	post(filter: PostFilter, order: PostOrder, first: Int, offset: Int): [Post]
+	msg: String
+	numUids: Int
+}
+
+type DeleteUserPayload {
+	user(filter: UserFilter, order: UserOrder, first: Int, offset: Int): [User]
+	msg: String
+	numUids: Int
+}
+
+type PostAggregateResult {
+	count: Int
+	titleMin: String
+	titleMax: String
+	textMin: String
+	textMax: String
+	datePublishedMin: DateTime
+	datePublishedMax: DateTime
+}
+
+type UpdateCategoryPayload {
+	category(filter: CategoryFilter, order: CategoryOrder, first: Int, offset: Int): [Category]
+	numUids: Int
+}
+
+type UpdateCommentPayload {
+	comment(filter: CommentFilter, order: CommentOrder, first: Int, offset: Int): [Comment]
+	numUids: Int
+}
+
+type UpdatePostPayload {
+	post(filter: PostFilter, order: PostOrder, first: Int, offset: Int): [Post]
+	numUids: Int
+}
+
+type UpdateUserPayload {
+	user(filter: UserFilter, order: UserOrder, first: Int, offset: Int): [User]
+	numUids: Int
+}
+
+type UserAggregateResult {
+	count: Int
+	usernameMin: String
+	usernameMax: String
+	displayNameMin: String
+	displayNameMax: String
+	avatarImgMin: String
+	avatarImgMax: String
+}
+
+#######################
+# Generated Enums
+#######################
+
+enum CategoryHasFilter {
+	name
+	posts
+}
+
+enum CategoryOrderable {
+	name
+}
+
+enum CommentHasFilter {
+	text
+	commentsOn
+	author
+	datePublished
+}
+
+enum CommentOrderable {
+	text
+	datePublished
+}
+
+enum PostHasFilter {
+	title
+	text
+	datePublished
+	author
+	category
+	comments
+	likes
+}
+
+enum PostOrderable {
+	title
+	text
+	datePublished
+}
+
+enum UserHasFilter {
+	username
+	displayName
+	avatarImg
+	posts
+	comments
+	likesOn
+}
+
+enum UserOrderable {
+	username
+	displayName
+	avatarImg
+}
+
+#######################
+# Generated Inputs
+#######################
+
+input AddCategoryInput {
+	name: String!
+	posts: [PostRef!]
+}
+
+input AddCommentInput {
+	text: String!
+	commentsOn: PostRef!
+	author: UserRef!
+	datePublished: DateTime
+}
+
+input AddPostInput {
+	title: String!
+	text: String!
+	datePublished: DateTime
+	author: UserRef!
+	category: CategoryRef!
+	comments: [CommentRef!]
+	likes: [UserRef!]
+}
+
+input AddUserInput {
+	username: String!
+	displayName: String
+	avatarImg: String
+	posts: [PostRef!]
+	comments: [CommentRef!]
+	likesOn: [PostRef!]
+}
+
+input CategoryFilter {
+	id: [ID!]
+	name: StringTermFilter
+	has: CategoryHasFilter
+	and: [CategoryFilter]
+	or: [CategoryFilter]
+	not: CategoryFilter
+}
+
+input CategoryOrder {
+	asc: CategoryOrderable
+	desc: CategoryOrderable
+	then: CategoryOrder
+}
+
+input CategoryPatch {
+	name: String
+	posts: [PostRef!]
+}
+
+input CategoryRef {
+	id: ID
+	name: String
+	posts: [PostRef!]
+}
+
+input CommentFilter {
+	id: [ID!]
+	has: CommentHasFilter
+	and: [CommentFilter]
+	or: [CommentFilter]
+	not: CommentFilter
+}
+
+input CommentOrder {
+	asc: CommentOrderable
+	desc: CommentOrderable
+	then: CommentOrder
+}
+
+input CommentPatch {
+	text: String
+	commentsOn: PostRef
+	author: UserRef
+	datePublished: DateTime
+}
+
+input CommentRef {
+	id: ID
+	text: String
+	commentsOn: PostRef
+	author: UserRef
+	datePublished: DateTime
+}
+
+input PostFilter {
+	id: [ID!]
+	title: StringTermFilter
+	text: StringFullTextFilter
+	has: PostHasFilter
+	and: [PostFilter]
+	or: [PostFilter]
+	not: PostFilter
+}
+
+input PostOrder {
+	asc: PostOrderable
+	desc: PostOrderable
+	then: PostOrder
+}
+
+input PostPatch {
+	title: String
+	text: String
+	datePublished: DateTime
+	author: UserRef
+	category: CategoryRef
+	comments: [CommentRef!]
+	likes: [UserRef!]
+}
+
+input PostRef {
+	id: ID
+	title: String
+	text: String
+	datePublished: DateTime
+	author: UserRef
+	category: CategoryRef
+	comments: [CommentRef!]
+	likes: [UserRef!]
+}
+
+input UpdateCategoryInput {
+	filter: CategoryFilter!
+	set: CategoryPatch
+	remove: CategoryPatch
+}
+
+input UpdateCommentInput {
+	filter: CommentFilter!
+	set: CommentPatch
+	remove: CommentPatch
+}
+
+input UpdatePostInput {
+	filter: PostFilter!
+	set: PostPatch
+	remove: PostPatch
+}
+
+input UpdateUserInput {
+	filter: UserFilter!
+	set: UserPatch
+	remove: UserPatch
+}
+
+input UserFilter {
+	username: StringHashFilter
+	has: UserHasFilter
+	and: [UserFilter]
+	or: [UserFilter]
+	not: UserFilter
+}
+
+input UserOrder {
+	asc: UserOrderable
+	desc: UserOrderable
+	then: UserOrder
+}
+
+input UserPatch {
+	displayName: String
+	avatarImg: String
+	posts: [PostRef!]
+	comments: [CommentRef!]
+	likesOn: [PostRef!]
+}
+
+input UserRef {
+	username: String
+	displayName: String
+	avatarImg: String
+	posts: [PostRef!]
+	comments: [CommentRef!]
+	likesOn: [PostRef!]
+}
+
+#######################
+# Generated Query
+#######################
+
+type Query {
+	getUser(username: String!): User
+	queryUser(filter: UserFilter, order: UserOrder, first: Int, offset: Int): [User]
+	aggregateUser(filter: UserFilter): UserAggregateResult
+	getPost(id: ID!): Post
+	queryPost(filter: PostFilter, order: PostOrder, first: Int, offset: Int): [Post]
+	aggregatePost(filter: PostFilter): PostAggregateResult
+	getComment(id: ID!): Comment
+	queryComment(filter: CommentFilter, order: CommentOrder, first: Int, offset: Int): [Comment]
+	aggregateComment(filter: CommentFilter): CommentAggregateResult
+	getCategory(id: ID!): Category
+	queryCategory(filter: CategoryFilter, order: CategoryOrder, first: Int, offset: Int): [Category]
+	aggregateCategory(filter: CategoryFilter): CategoryAggregateResult
+}
+
+#######################
+# Generated Mutations
+#######################
+
+type Mutation {
+	addUser(input: [AddUserInput!]!): AddUserPayload
+	updateUser(input: UpdateUserInput!): UpdateUserPayload
+	deleteUser(filter: UserFilter!): DeleteUserPayload
+	addPost(input: [AddPostInput!]!): AddPostPayload
+	updatePost(input: UpdatePostInput!): UpdatePostPayload
+	deletePost(filter: PostFilter!): DeletePostPayload
+	addComment(input: [AddCommentInput!]!): AddCommentPayload
+	updateComment(input: UpdateCommentInput!): UpdateCommentPayload
+	deleteComment(filter: CommentFilter!): DeleteCommentPayload
+	addCategory(input: [AddCategoryInput!]!): AddCategoryPayload
+	updateCategory(input: UpdateCategoryInput!): UpdateCategoryPayload
+	deleteCategory(filter: CategoryFilter!): DeleteCategoryPayload
+}
+
