@@ -240,7 +240,7 @@
 import { gql } from "nuxt-graphql-request";
 import { DateTime } from "~/node_modules/luxon/build/node/luxon";
 import { ValidationProvider, ValidationObserver } from "vee-validate";
-import { getAvatarUrl } from "../../utils/user";
+import getAvatarUrl from "../../utils/user";
 
 export default {
   components: {
