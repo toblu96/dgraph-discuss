@@ -50,6 +50,7 @@
         </div>
         <div class="mt-4 flex-shrink-0 flex md:mt-0 md:ml-4 space-x-4">
           <nuxt-link
+            id="settings"
             to="/settings"
             class="inline-flex items-center px-2 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-gray-600"
           >
@@ -78,6 +79,7 @@
           </nuxt-link>
 
           <nuxt-link
+            id="create-new-post"
             to="/post/new"
             class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-red-500 to-pink-600 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-pink-500"
           >

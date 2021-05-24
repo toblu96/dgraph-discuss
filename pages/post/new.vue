@@ -149,6 +149,7 @@
                       </div>
                       <div class="ml-3">
                         <p
+                          id="selected-author-name"
                           class="text-md text-gray-700 group-hover:text-gray-900"
                         >
                           {{ $store.state.auth.user.displayName }}
@@ -217,12 +218,14 @@
           <div class="pt-5">
             <div class="flex justify-end">
               <nuxt-link
+                id="cancel-new-post"
                 to="/"
                 class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
               >
                 Cancel
               </nuxt-link>
               <button
+                id="submit-new-post"
                 type="submit"
                 class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
               >

@@ -10,7 +10,7 @@
     <div v-else>
       <div class="bg-white shadow overflow-hidden sm:rounded-md">
         <ul class="divide-y divide-gray-200">
-          <li v-for="post in posts" :key="post.id">
+          <li id="blog-post-list-entry" v-for="post in posts" :key="post.id">
             <nuxt-link :to="`/post/${post.id}`" class="block hover:bg-gray-50">
               <div class="flex items-center px-4 py-4 sm:px-6">
                 <div class="min-w-0 flex-1 flex items-center">

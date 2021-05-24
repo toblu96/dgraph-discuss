@@ -57,6 +57,7 @@
           </div>
           <div class="space-x-1">
             <button
+              id="delete-post"
               v-show="post.author.username === $store.state.auth.user.username"
               type="button"
               @click="deletePost(post.id)"
@@ -80,6 +81,7 @@
               </svg>
             </button>
             <button
+              id="like-post"
               type="button"
               @click="toggleLike()"
               :class="
