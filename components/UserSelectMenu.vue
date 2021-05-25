@@ -33,7 +33,7 @@
         </div>
         <!-- User dropdown -->
         <div v-else class="w-56">
-          <div class="mt-1 relative">
+          <div id="current-user-select" class="mt-1 relative">
             <button
               type="button"
               class="relative w-full bg-white border border-gray-300 cursor-default rounded-md shadow-sm pl-3 pr-10 py-2 text-left focus:outline-none focus:ring-1 focus:ring-pink-500 focus:border-pink-500 sm:text-sm"

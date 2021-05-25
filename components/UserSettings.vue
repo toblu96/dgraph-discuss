@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="user-settings">
     <p v-if="$fetchState.pending">Fetching Users...</p>
     <p v-else-if="$fetchState.error">An error occurred :( {{ $fetchState }}</p>
     <div v-else>
@@ -12,6 +12,7 @@
             class="mt-3 grid grid-cols-1 gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4"
           >
             <li
+              :id="user.username"
               v-for="user in users"
               :key="user.username"
               class="col-span-1 flex shadow-sm rounded-md"
@@ -71,6 +72,7 @@
                 class="flex justify-between items-center shadow-sm rounded-md"
               >
                 <nuxt-link
+                  id="add-new-user"
                   to="/user/new"
                   class="group px-4 py-3 h-full bg-white border border-gray-200 rounded-md flex items-center focus:outline-none focus:ring-2 focus:ring-pink-500"
                 >
@@ -223,12 +225,14 @@
 
             <div class="flex justify-end pt-5">
               <button
+                id="delete-user"
                 @click="deleteUser(editedUser.username)"
                 class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
               >
                 Delete User
               </button>
               <button
+                id="save-user"
                 @click="saveUser()"
                 class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
               >

@@ -186,6 +186,7 @@
                 <div class="mt-1">
                   <ul role="list" class="flex space-x-4 p-2">
                     <li
+                      :id="`avatar-${avatar.id}`"
                       v-for="avatar in avatarSuggestions"
                       :key="avatar.id"
                       class="relative"
@@ -221,7 +222,7 @@
         </div>
 
         <!-- Error panel -->
-        <div v-if="errors[0]" class="rounded-md bg-red-50 p-4">
+        <div v-if="errors[0]" id="error-panel" class="rounded-md bg-red-50 p-4">
           <div class="flex">
             <div class="flex-shrink-0">
               <!-- Heroicon name: solid/x-circle -->
@@ -257,12 +258,14 @@
         <div class="pt-5">
           <div class="flex justify-end">
             <nuxt-link
+              id="cancel-new-user"
               to="/settings"
               class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
             >
               Cancel
             </nuxt-link>
             <button
+              id="save-new-user"
               type="submit"
               class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
             >
